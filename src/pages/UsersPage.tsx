@@ -3,28 +3,34 @@ import UserTable from "../components/UserTable";
 import SearchBar from "../components/SearchBar";
 import Pagination from "../components/Pagination";
 import useUsers from "../hooks/useUsers";
-import { filterUsers } from "../utils/filterUsers";
-import { sortUsers } from "../utils/sortUsers";
+// import { filterUsers } from "../utils/filterUsers";
+import { filterUsers } from "user-utils-dhanraj";
+// import { sortUsers } from "../utils/sortUsers";
+import { sortUsers } from "user-utils-dhanraj";
+import { User } from "../../types";
 
 const UsersPage = () => {
   const { users, isLoading, error } = useUsers();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortField, setSortField] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [currentPage, setCurrentPage] = useState(1);
-
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sortField, setSortField] = useState<keyof User | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortField, sortOrder]);
   
   const usersPerPage = 10;
+
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   const filteredUsers = filterUsers(users, searchQuery);
 
   const sortedUsers = sortUsers(filteredUsers, sortField, sortOrder);
-
+  console.log("Sorted Users", sortedUsers);
   const startIdx = (currentPage - 1) * usersPerPage;
   const paginatedUsers = sortedUsers.slice(startIdx, startIdx + usersPerPage);
-
+  console.log("Paginated Users", paginatedUsers);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">

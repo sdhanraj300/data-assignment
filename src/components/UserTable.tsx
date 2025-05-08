@@ -1,9 +1,17 @@
 import { useNavigate } from "react-router-dom";
+import React from "react";
+import { User, UserTableProps } from "../../types";
 
-const UserTable = ({ users, onSort, sortField, sortOrder, setSortOrder }) => {
+const UserTable: React.FC<UserTableProps> = ({
+  users,
+  onSort,
+  sortField,
+  sortOrder,
+  setSortOrder,
+}) => {
   const navigate = useNavigate();
 
-  const handleSort = (field) => {
+  const handleSort = (field: keyof User) => {
     if (sortField === field) {
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
@@ -12,8 +20,7 @@ const UserTable = ({ users, onSort, sortField, sortOrder, setSortOrder }) => {
     }
   };
 
-  // Function to format column headers for display
-  const formatColumnName = (field) => {
+  const formatColumnName = (field: keyof User): string => {
     return field
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -28,11 +35,11 @@ const UserTable = ({ users, onSort, sortField, sortOrder, setSortOrder }) => {
             {["first_name", "last_name", "age", "web", "email"].map((field) => (
               <th
                 key={field}
-                onClick={() => handleSort(field)}
+                onClick={() => handleSort(field as keyof User)}
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors duration-150"
               >
                 <div className="flex items-center space-x-1">
-                  <span>{formatColumnName(field)}</span>
+                  <span>{formatColumnName(field as keyof User)}</span>
                   {sortField === field ? (
                     <span className="text-indigo-500">
                       {sortOrder === "asc" ? (
@@ -94,7 +101,7 @@ const UserTable = ({ users, onSort, sortField, sortOrder, setSortOrder }) => {
           {users.length === 0 ? (
             <tr>
               <td
-                colSpan="5"
+                colSpan={5}
                 className="px-6 py-4 text-center text-sm text-gray-500"
               >
                 No users found

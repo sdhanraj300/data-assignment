@@ -1,23 +1,23 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { User } from "../../types";
 
 const Detail = () => {
-  const { id } = useParams();
+  const { id } = useParams() as { id: string };
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(
-      "https://datapeace-storage.s3-us-west-2.amazonaws.com/dummy_data/users.json"
-    )
+    fetch("https://datapeace-storage.s3-us-west-2.amazonaws.com/dummy_data/users.json")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch user data");
         return res.json();
       })
-      .then((data) => {
+      .then((data: User[]) => {
         const selectedUser = data.find((u) => u.id === Number(id));
         if (!selectedUser) {
           throw new Error("User not found");
@@ -25,29 +25,21 @@ const Detail = () => {
         setUser(selectedUser);
         setIsLoading(false);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         setError(err.message);
         setIsLoading(false);
       });
   }, [id]);
 
-  // Function to format field names for display
-  const formatFieldName = (key) => {
+  const formatFieldName = (key: string): string => {
     return key
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
 
-  // Determine which fields to highlight as primary info
-  const isPrimaryField = (key) => {
-    return [
-      "first_name",
-      "last_name",
-      "email",
-      "company_name",
-      "job_title",
-    ].includes(key);
+  const isPrimaryField = (key: string): boolean => {
+    return ["first_name", "last_name", "email", "company_name", "job_title"].includes(key);
   };
 
   return (
@@ -58,12 +50,7 @@ const Detail = () => {
             onClick={() => navigate("/users")}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-indigo-700 bg-white hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
           >
-            <svg
-              className="mr-2 h-5 w-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
+            <svg className="mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
                 d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
@@ -83,12 +70,7 @@ const Detail = () => {
             <div className="bg-red-50 p-6 border-b border-red-100">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg
-                    className="h-6 w-6 text-red-400"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
+                  <svg className="h-6 w-6 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -111,48 +93,27 @@ const Detail = () => {
               </div>
             </div>
           </div>
-        ) : (
+        ) : user ? (
           <div className="bg-white shadow-xl rounded-xl overflow-hidden">
-            {/* Header with user's name */}
             <div className="bg-indigo-700 px-6 py-8">
               <div className="flex items-center">
                 <div className="flex-shrink-0 bg-white rounded-full p-2">
-                  <svg
-                    className="h-12 w-12 text-indigo-700"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
+                  <svg className="h-12 w-12 text-indigo-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
                 <div className="ml-5">
                   <h2 className="text-3xl font-bold text-white tracking-tight">
                     {user.first_name} {user.last_name}
                   </h2>
-                  {user.job_title && (
-                    <p className="text-indigo-200 text-lg">{user.job_title}</p>
-                  )}
-                  {user.company_name && (
-                    <p className="text-indigo-300 text-md">
-                      {user.company_name}
-                    </p>
-                  )}
+                  {user.job_title && <p className="text-indigo-200 text-lg">{user.job_title}</p>}
+                  {user.company_name && <p className="text-indigo-300 text-md">{user.company_name}</p>}
                 </div>
               </div>
             </div>
 
-            {/* Primary information */}
             <div className="px-6 py-6 bg-gray-50 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Contact Information
-              </h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Contact Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Object.entries(user)
                   .filter(
@@ -166,17 +127,14 @@ const Detail = () => {
                       <div className="text-gray-500 font-medium w-32">
                         {formatFieldName(key)}:
                       </div>
-                      <div className="text-gray-900">{value}</div>
+                      <div className="text-gray-900">{String(value)}</div>
                     </div>
                   ))}
               </div>
             </div>
 
-            {/* Secondary information */}
             <div className="px-6 py-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Additional Details
-              </h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Additional Details</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4">
                 {Object.entries(user)
                   .filter(([key]) => !isPrimaryField(key) && key !== "id")
@@ -185,13 +143,12 @@ const Detail = () => {
                       <div className="text-gray-500 font-medium w-32">
                         {formatFieldName(key)}:
                       </div>
-                      <div className="text-gray-900">{value}</div>
+                      <div className="text-gray-900">{String(value)}</div>
                     </div>
                   ))}
               </div>
             </div>
 
-            {/* Footer */}
             <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 text-right">
               <button
                 onClick={() => navigate("/users")}
@@ -201,7 +158,7 @@ const Detail = () => {
               </button>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

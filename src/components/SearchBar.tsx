@@ -1,7 +1,11 @@
-import { useState } from "react";
-
-const SearchBar = ({ searchQuery, setSearchQuery }) => {
+import { useState, ChangeEvent, FC } from "react";
+import { SearchBarProps } from "../../types";
+const SearchBar: FC<SearchBarProps> = ({ searchQuery, setSearchQuery }) => {
   const [isFocused, setIsFocused] = useState(false);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <div className="relative">
@@ -31,7 +35,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => {
           type="text"
           placeholder="Search by First or Last Name"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           className="ml-2 block w-full border-0 bg-transparent focus:outline-none focus:ring-0 text-gray-900 placeholder-gray-500 sm:text-sm"

@@ -1,6 +1,18 @@
-const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
-  const getPageNumbers = () => {
-    const pages = [];
+import React from "react";
+
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  setCurrentPage: (page: number) => void;
+}
+
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  setCurrentPage,
+}) => {
+  const getPageNumbers = (): (number | string)[] => {
+    const pages: (number | string)[] = [];
 
     pages.push(1);
 
@@ -34,11 +46,10 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
         onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
         className={`px-3 py-1 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
-            ${
-              currentPage === 1
-                ? "text-gray-400 cursor-not-allowed bg-gray-100"
-                : "text-gray-700 hover:bg-gray-50 bg-white border border-gray-300"
-            }`}
+            ${currentPage === 1
+            ? "text-gray-400 cursor-not-allowed bg-gray-100"
+            : "text-gray-700 hover:bg-gray-50 bg-white border border-gray-300"
+          }`}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +65,7 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
         </svg>
       </button>
 
-      {/* Page numbers */}
+      {/* Page Numbers */}
       {getPageNumbers().map((page, index) =>
         page === "..." ? (
           <span key={`ellipsis-${index}`} className="px-3 py-1 text-gray-500">
@@ -63,30 +74,28 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
         ) : (
           <button
             key={`page-${page}`}
-            onClick={() => setCurrentPage(page)}
+            onClick={() => setCurrentPage(page as number)}
             disabled={currentPage === page}
             className={`px-3 py-1.5 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
-                  ${
-                    currentPage === page
-                      ? "bg-indigo-600 text-white border border-indigo-600"
-                      : "text-gray-700 hover:bg-gray-50 bg-white border border-gray-300"
-                  }`}
+                  ${currentPage === page
+                ? "bg-indigo-600 text-white border border-indigo-600"
+                : "text-gray-700 hover:bg-gray-50 bg-white border border-gray-300"
+              }`}
           >
             {page}
           </button>
         )
       )}
 
-      {/* Next button */}
+      {/* Next Button */}
       <button
         onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
         className={`px-3 py-1 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
-            ${
-              currentPage === totalPages
-                ? "text-gray-400 cursor-not-allowed bg-gray-100"
-                : "text-gray-700 hover:bg-gray-50 bg-white border border-gray-300"
-            }`}
+            ${currentPage === totalPages
+            ? "text-gray-400 cursor-not-allowed bg-gray-100"
+            : "text-gray-700 hover:bg-gray-50 bg-white border border-gray-300"
+          }`}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
